@@ -1,0 +1,49 @@
+{
+  "name": "erp",
+  "version": "1.0.0",
+  "description": "erp for companies",
+  "main": "server.ts",
+  "type": "module",
+  "scripts": {
+    "start": "node --env-file=.env ./dist/server.js",
+    "build": "tsc ",
+    "dev": "npx  tsx  watch --env-file=.env  ./src/server.ts",
+    "test": "npx tsx --test  ./**/*.test.ts",
+    "eslint": "npx eslint **/*.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/slodkiadrianek/ERP.git"
+  },
+  "keywords": [
+    "erp"
+  ],
+  "author": "Adrian Kurek",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/slodkiadrianek/ERP/issues"
+  },
+  "homepage": "https://github.com/slodkiadrianek/ERP#readme",
+  "dependencies": {
+    "bcryptjs": "^3.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.0.0",
+    "mongoose": "^8.10.1",
+    "winston": "^3.17.0",
+    "winston-daily-rotate-file": "^5.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.20.0",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/mongoose": "^5.11.96",
+    "@types/node": "^22.13.4",
+    "eslint": "^9.20.1",
+    "globals": "^15.15.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.24.0"
+  }
+}
