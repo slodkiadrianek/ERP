@@ -1,22 +1,7 @@
-import mongoose, { Document, Schema } from "mongoose";
-import { IProduct } from "./inventory.model.js";
-
-export interface ICustomer extends Document {
-  firstname: string;
-  lastname: string;
-  email: string;
-  phone: string;
-  address: {
-    country: string;
-    city: string;
-    street: string;
-    code: number;
-    number: string;
-  };
-  createdAt: Date;
-  updatedAt: Date;
-}
-
+import mongoose, { Document, Schema, model } from "mongoose";
+import { IProduct } from "./product.model.js";
+import { ICustomer } from "./customer.model.js";
+import { IWarehouse } from "./inventory.model.js";
 export interface IOrder extends Document {
   customer: ICustomer["_id"];
   items: {
@@ -29,26 +14,10 @@ export interface IOrder extends Document {
   totalAmount: number;
   status: "pending" | "completed" | "cancelled";
   paymentStatus: "paid" | "unpaid" | "partial";
+  warehouse: IWarehouse["_id"];
   createdAt: Date;
   updatedAt: Date;
 }
-
-const customerSchema = new Schema<ICustomer>(
-  {
-    firstname: { type: String, required: true },
-    lastname: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    phone: { type: String },
-    address: {
-      country: { type: String, required: true },
-      city: { type: String, required: true },
-      street: { type: String, required: true },
-      code: { type: Number, required: true },
-      number: { type: String, required: true },
-    },
-  },
-  { timestamps: true }
-);
 
 const orderSchema = new Schema<IOrder>(
   {
@@ -81,11 +50,9 @@ const orderSchema = new Schema<IOrder>(
       enum: ["paid", "unpaid", "partial"],
       default: "unpaid",
     },
+    warehouse: { type: Schema.Types.ObjectId, ref: "Warehouse" },
   },
   { timestamps: true }
 );
 
-const Customer = mongoose.model<ICustomer>("Customer", customerSchema);
-const Order = mongoose.model<IOrder>("Order", orderSchema);
-
-export { Customer, Order };
+export const Order = model<IOrder>("Order", orderSchema);

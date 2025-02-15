@@ -1,37 +1,80 @@
-import mongoose from "mongoose";
+import { Document, Schema, model, Types } from "mongoose";
 
-export interface IRole {
-  _id: string;
+export interface IRole extends Document {
+  _id: Types.ObjectId;
   name: string;
   permissions: { [key: string]: string }[];
 }
 
-export interface IUser {
-  _id: string;
-  username: string;
+export interface IEmployee extends Document {
+  _id: Types.ObjectId;
+  firstname: string;
+  lastname: string;
   password: string;
   email: string;
-  role: IRole;
+  role: IRole["_id"];
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
 
-const roleSchema = new mongoose.Schema<IRole>({
+export interface IAttendance extends Document {
+  employee: IEmployee["_id"];
+  from: Date;
+  to: Date;
+  leaveType: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const roleSchema = new Schema<IRole>({
   name: { type: String, required: true, unique: true },
   permissions: [{ type: String }],
 });
 
-const userSchema = new mongoose.Schema<IUser>(
+const employeeSchema = new Schema<IEmployee>(
   {
-    username: { type: String, required: true, unique: true },
+    firstname: { type: String, required: true, unique: true },
+    lastname: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    role: { type: mongoose.Schema.Types.ObjectId, ref: "Role", required: true },
+    role: { type: Schema.Types.ObjectId, ref: "Role", required: true },
     isActive: { type: Boolean, default: true },
   },
   { timestamps: true }
 );
 
-export const Role = mongoose.model("Role", roleSchema);
-export const User = mongoose.model("User", userSchema);
+const attendanceSchema = new Schema<IAttendance>(
+  {
+    employee: { type: Schema.Types.ObjectId, ref: "Employee", required: true },
+    from: {
+      type: Date,
+      required: true,
+    },
+    to: {
+      type: Date,
+      required: true,
+    },
+    leaveType: { type: String, required: true },
+  },
+  { timestamps: true }
+);
+
+const payrollSchema = new Schema(
+  {
+    employee: {
+      type: Schema.Types.ObjectId,
+      ref: "Employee",
+      required: true,
+    },
+    payrollPeriod: { type: Date, required: true },
+    amount: { type: Number, required: true },
+    status: { type: String, enum: ["paid", "unpaid"], default: "unpaid" },
+  },
+  { timestamps: true }
+);
+
+export const Role = model("Role", roleSchema);
+export const User = model("User", employeeSchema);
+export const Attendance = model("Attendance", attendanceSchema);
+export const Payroll = model("Payroll", payrollSchema);
