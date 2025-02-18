@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema, model } from "mongoose";
+import { Document, Schema, model } from "mongoose";
 import { IProduct } from "./product.model.js";
 import { ICustomer } from "./customer.model.js";
 import { IWarehouse } from "./inventory.model.js";
@@ -22,14 +22,14 @@ export interface IOrder extends Document {
 const orderSchema = new Schema<IOrder>(
   {
     customer: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "Customer",
       required: true,
     },
     items: [
       {
         product: {
-          type: mongoose.Schema.Types.ObjectId,
+          type: Schema.Types.ObjectId,
           ref: "Product",
           required: true,
         },
@@ -52,7 +52,7 @@ const orderSchema = new Schema<IOrder>(
     },
     warehouse: { type: Schema.Types.ObjectId, ref: "Warehouse" },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const Order = model<IOrder>("Order", orderSchema);

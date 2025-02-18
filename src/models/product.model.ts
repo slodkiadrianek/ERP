@@ -15,7 +15,7 @@ export interface IProduct extends Document {
   price: number;
   cost: number;
   quantity: number;
-  minStockLevel: Number;
+  minStockLevel: number;
   category: ICategory["_id"];
   warehouse: IWarehouse["_id"];
   createdAt: Date;
@@ -43,7 +43,7 @@ const productSchema = new Schema(
     },
     warehouse: { type: Schema.Types.ObjectId, ref: "Warehouse" },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const Category = model("Category", categorySchema);

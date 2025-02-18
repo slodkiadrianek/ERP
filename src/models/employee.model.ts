@@ -14,8 +14,6 @@ export interface IEmployee extends Document {
   email: string;
   role: IRole["_id"];
   isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 export interface IAttendance extends Document {
@@ -41,7 +39,7 @@ const employeeSchema = new Schema<IEmployee>(
     role: { type: Schema.Types.ObjectId, ref: "Role", required: true },
     isActive: { type: Boolean, default: true },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const attendanceSchema = new Schema<IAttendance>(
@@ -57,7 +55,7 @@ const attendanceSchema = new Schema<IAttendance>(
     },
     leaveType: { type: String, required: true },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const payrollSchema = new Schema(
@@ -71,10 +69,10 @@ const payrollSchema = new Schema(
     amount: { type: Number, required: true },
     status: { type: String, enum: ["paid", "unpaid"], default: "unpaid" },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const Role = model("Role", roleSchema);
-export const User = model("User", employeeSchema);
+export const Employee = model("Employee", employeeSchema);
 export const Attendance = model("Attendance", attendanceSchema);
 export const Payroll = model("Payroll", payrollSchema);

@@ -12,7 +12,7 @@ export class Authentication {
   constructor(
     jwt: Jwt,
     caching: ReturnType<typeof createClient>,
-    logger: Logger
+    logger: Logger,
   ) {
     this.jwt = jwt;
     if (!process.env.JWT_SECRET) {
@@ -29,7 +29,7 @@ export class Authentication {
       this.jwtSecret,
       {
         expiresIn: "1h",
-      }
+      },
     );
     return token;
   }
@@ -37,7 +37,7 @@ export class Authentication {
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
       this.logger.error(
-        `Token is missing during verification of request ${req.baseUrl} with data: ${req.body}`
+        `Token is missing during verification of request ${req.baseUrl} with data: ${req.body}`,
       );
       res.status(401).json({ message: "Token is missing" });
       return;
@@ -46,13 +46,13 @@ export class Authentication {
       const isBlacklisted = await this.caching.get(`blacklist:${token}`);
       if (isBlacklisted) {
         this.logger.error(
-          `Token is blacklisted  of request ${req.baseUrl} with data: ${req.body}`
+          `Token is blacklisted  of request ${req.baseUrl} with data: ${req.body}`,
         );
         throw new AppError(401, "Authorization", "Token is blacklisted.");
       }
       const decoded = jwt.verify(
         token,
-        process.env.JWT_SECRET as string
+        process.env.JWT_SECRET as string,
       ) as JwtPayload;
 
       (req as Request & { user?: unknown }).user = {
@@ -64,9 +64,9 @@ export class Authentication {
       return next();
     } catch (error) {
       this.logger.error(
-        `Token is invalid of request ${req.baseUrl} with data: ${req.body}`
+        `Token is invalid of request ${req.baseUrl} with data: ${req.body}`,
       );
-      res.status(401).json({ message: "Invalid token" });
+      res.status(401).json({ message: "Invalid token", error });
       return;
     }
   }
@@ -74,7 +74,7 @@ export class Authentication {
     const decoded = jwt.decode(token) as { exp: number };
     if (!decoded || !decoded.exp) {
       this.logger.error(
-        `Token is invalid of request ${req.baseUrl} with data: ${req.body}`
+        `Token is invalid of request ${req.baseUrl} with data: ${req.body}`,
       );
       throw new Error("Invalid token.");
     }
@@ -83,7 +83,7 @@ export class Authentication {
       EX: expiration,
     });
     this.logger.info(
-      `Token has been blacklisted  of request ${req.baseUrl} with data: ${req.body}`
+      `Token has been blacklisted  of request ${req.baseUrl} with data: ${req.body}`,
     );
   }
 }

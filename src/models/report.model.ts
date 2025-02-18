@@ -3,6 +3,7 @@ import { IWarehouse } from "./inventory.model.js";
 import { IEmployee } from "./employee.model.js";
 
 export interface IReport extends Document {
+  _id: Types.ObjectId;
   title: string;
   type: IWarehouse["_id"];
   generatedBy: IEmployee["_id"];
@@ -42,7 +43,7 @@ const reportSchema = new Schema<IReport>(
     },
     filePath: { type: String },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const Report = model("Report", reportSchema);

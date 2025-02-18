@@ -1,6 +1,6 @@
 import { Document, Schema, model, Types } from "mongoose";
 
-export interface IWarehouse {
+export interface IWarehouse extends Document {
   _id: Types.ObjectId;
   name: string;
   location: {
@@ -42,7 +42,7 @@ const warehouseSchema = new Schema<IWarehouse>(
     },
     capacity: { type: Number, required: true },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const Warehouse = model("Warehouse", warehouseSchema);
