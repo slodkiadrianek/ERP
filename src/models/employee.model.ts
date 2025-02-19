@@ -3,7 +3,6 @@ import { Document, Schema, model, Types } from "mongoose";
 export interface IRole extends Document {
   _id: Types.ObjectId;
   name: string;
-  permissions: { [key: string]: string }[];
 }
 
 export interface IEmployee extends Document {
@@ -27,7 +26,6 @@ export interface IAttendance extends Document {
 
 const roleSchema = new Schema<IRole>({
   name: { type: String, required: true, unique: true },
-  permissions: [{ type: String }],
 });
 
 const employeeSchema = new Schema<IEmployee>(
@@ -41,6 +39,18 @@ const employeeSchema = new Schema<IEmployee>(
   },
   { timestamps: true },
 );
+
+export interface IAsssignedTask {
+  title: string;
+  description: string;
+  assignedEmployee: string[];
+}
+
+const assignedTaskSchema = new Schema<IAsssignedTask>({
+  title: { type: String, required: true },
+  description: { type: String, required: true },
+  assignedEmployee: { type: [Types.ObjectId], required: true },
+});
 
 const attendanceSchema = new Schema<IAttendance>(
   {
@@ -76,3 +86,4 @@ export const Role = model("Role", roleSchema);
 export const Employee = model("Employee", employeeSchema);
 export const Attendance = model("Attendance", attendanceSchema);
 export const Payroll = model("Payroll", payrollSchema);
+export const AsssignedTask = model("AssignedTask", assignedTaskSchema);

@@ -21,7 +21,7 @@ const registerEmployee: ObjectSchema = Joi.object({
       "string.base": "Password must be a string",
       "string.min": "Password must contain at least 8 characters",
       "string.max": "Password can contain only 30 characters",
-      "string.pattern":
+      "any.pattern":
         "Password must contain at least 1 lowercase letter, 1 uppercase letter, 1 digit, and 1 special character. It must be at least 8 characters long.",
     }),
   email: Joi.string().email().required().messages({
@@ -29,9 +29,9 @@ const registerEmployee: ObjectSchema = Joi.object({
     "string.base": "Email must be a string",
     "string.email": "Email must be a valid ",
   }),
-  role: Joi.number().required().messages({
+  role: Joi.string().required().messages({
     "any.required": "Role is required",
-    "number.base": "Role must be a number",
+    "string.base": "Role must be a string",
   }),
 });
 
