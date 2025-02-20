@@ -1,15 +1,16 @@
 import { Logger } from "../utils/logger.js";
 import { IEmployee } from "../models/employee.model.js";
 import { Employee } from "../models/employee.model.js";
-import { caching } from "../app.js";
 import { AppError } from "../models/error.model.js";
 import { newEmployee } from "../api/v1/controllers/auth.controller.js";
 import { Authentication } from "../middleware/auth.middleware.js";
 import bcrypt from "bcryptjs";
+import { RedisCacheService } from "../types/common.types.js";
+
 export class AuthService {
   private logger: Logger;
   private auth: Authentication;
-  constructor(logger: Logger, auth: Authentication) {
+  constructor(logger: Logger, auth: Authentication, private caching: RedisCacheService) {
     this.logger = logger;
     this.auth = auth;
   }
@@ -29,13 +30,10 @@ export class AuthService {
       const hashedPassword = await bcrypt.hash(employeeData.password, 12);
       employeeData.password = hashedPassword;
       const result = await Employee.create(employeeData);
-      await caching.set(`Employee-${result.email}`, JSON.stringify(result));
+     await  this.caching.set(`Employee-${result.email}`, JSON.stringify(result));
       return result;
     } catch (error) {
-      if (error instanceof AppError) throw error;
-      const errorMessage =
-        error instanceof Error ? error.message : "Unknown error";
-      this.logger.error(`Error registering employee: ${errorMessage}`);
+      this.logger.error(`Error registering employee: ${error}`);
       throw new AppError(500, "Employee", "Failed to register employee");
     }
   };

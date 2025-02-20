@@ -29,5 +29,5 @@ const logger = new Logger();
 const auth = new Authentication(process.env.JWT_SECRET || "", logger);
 const authService = new AuthService(logger, auth);
 const authController = new AuthController(logger, authService);
-const userRoutes = new AuthRoutes(authController);
+const userRoutes = new AuthRoutes(authController, auth);
 app.use(userRoutes.router);

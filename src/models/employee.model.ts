@@ -41,15 +41,18 @@ const employeeSchema = new Schema<IEmployee>(
 );
 
 export interface IAsssignedTask {
+  _id:string
   title: string;
   description: string;
-  assignedEmployee: string[];
+  assignedEmployees: string[];
+  status: "done" | "undone"
 }
 
 const assignedTaskSchema = new Schema<IAsssignedTask>({
   title: { type: String, required: true },
   description: { type: String, required: true },
-  assignedEmployee: { type: [Types.ObjectId], required: true },
+  assignedEmployees: { type: [Types.ObjectId], required: true },
+  status: { type: String, enum: ["done", "undone"], default: "undone" }
 });
 
 const attendanceSchema = new Schema<IAttendance>(
