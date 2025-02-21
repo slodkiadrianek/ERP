@@ -12,7 +12,7 @@ export class AuthRoutes {
   public router: Router;
   private authController: AuthController;
   private auth: Authentication;
-  private readonly loginRateLimit: RateLimitRequestHandler = rateLimit({
+  private readonly rateLimit: RateLimitRequestHandler = rateLimit({
     windowMs: 60 * 60 * 1000,
     limit: 3,
   });
@@ -27,13 +27,13 @@ export class AuthRoutes {
   protected initializeRoutes(): void {
     this.router.post(
       "/api/v1/auth/register",
-      this.loginRateLimit,
+      this.rateLimit,
       ValidationMiddleware.validate(registerEmployee, "body"),
       this.authController.registerEmployee,
     );
     this.router.post(
       "/api/v1/auth/login",
-      this.loginRateLimit,
+      this.rateLimit,
       ValidationMiddleware.validate(loginEmployee, "body"),
       this.authController.loginEmployee,
     );

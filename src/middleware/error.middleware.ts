@@ -2,9 +2,9 @@ import { AppError } from "../models/error.model.js";
 import { Response, ErrorRequestHandler, Request, NextFunction } from "express";
 export const errorHandler: ErrorRequestHandler = (
   err: Error,
-  req: Request,
+  _req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): void => {
   if (err instanceof AppError) {
     res.status(err.statusCode).json({

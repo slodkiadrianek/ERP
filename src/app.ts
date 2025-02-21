@@ -8,7 +8,12 @@ import { createClient } from "redis";
 import { AuthController } from "./api/v1/controllers/auth.controller.js";
 import { AuthService } from "./services/auth.service.js";
 import { Authentication } from "./middleware/auth.middleware.js";
-export let caching: ReturnType<typeof createClient>;
+import { RedisCacheService } from "./types/common.types.js";
+import { ManagerService } from "./services/manager.service.js";
+import { ManagerController } from "./api/v1/controllers/manager.controller.js";
+import { ManagerRoutes } from "./api/v1/routes/manager.routes.js";
+import { errorHandler } from "./middleware/error.middleware.js";
+export let caching: unknown;
 if (process.env.CACHE_LINK) {
   caching = await createClient({
     url: process.env.CACHE_LINK,
@@ -19,15 +24,24 @@ if (process.env.CACHE_LINK) {
   console.error(`No cache link provided`);
   process.exit(1);
 }
-
 export const app = express();
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const logger = new Logger();
-const auth = new Authentication(process.env.JWT_SECRET || "", logger);
-const authService = new AuthService(logger, auth);
+
+const auth = new Authentication(
+  process.env.JWT_SECRET || "",
+  logger,
+  caching as RedisCacheService,
+);
+const authService = new AuthService(logger, auth, caching as RedisCacheService);
 const authController = new AuthController(logger, authService);
-const userRoutes = new AuthRoutes(authController, auth);
-app.use(userRoutes.router);
+const employeeRoutes = new AuthRoutes(authController, auth);
+const managerService = new ManagerService(logger, caching as RedisCacheService);
+const managerController = new ManagerController(logger, managerService);
+const managerRoutes = new ManagerRoutes(auth, managerController);
+app.use(employeeRoutes.router);
+app.use(managerRoutes.router);
+app.use(errorHandler);
