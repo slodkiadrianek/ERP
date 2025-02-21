@@ -44,5 +44,15 @@ export class ManagerRoutes {
       this.auth.verify,
       this.managerController.updateStatus,
     );
+    this.router.get(
+      "/api/v1/managers/tasks/employees/:id",
+      this.auth.verify,
+      this.managerController.getEmployeesTasks,
+    );
+    this.router.put(
+      "/api/v1/managers/tasks/:id",
+      this.auth.verify,
+      this.managerController.updateTask,
+    );
   }
 }

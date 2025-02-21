@@ -90,7 +90,7 @@ export class ManagerController {
   ): Promise<void> => {
     try {
       if (!req.params.id) {
-        throw new AppError(400, "Task", "You have to specifie ID of a task");
+        throw new AppError(400, "Task", "You have to specifie ID of the task");
       }
       if (typeof req.params.id !== "string") {
         throw new AppError(404, "Task", "ID must be type of string");
@@ -133,11 +133,11 @@ export class ManagerController {
         throw new AppError(
           403,
           "Authentication",
-          "You are not allowed to create new task",
+          "You are not allowed to assign new employees to task",
         );
       }
       if (!req.params.id) {
-        throw new AppError(404, "Task", "You have to specifie ID of a task");
+        throw new AppError(404, "Task", "You have to specifie ID of the task");
       }
       if (typeof req.params.id !== "string") {
         throw new AppError(404, "Task", "ID must be type of string");
@@ -176,8 +176,6 @@ export class ManagerController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      console.log((req as AuthenticatedRequest).employee.role);
-
       if (!(req as AuthenticatedRequest).employee.role) {
         throw new AppError(400, "Authentication", "Role must be defined");
       }
@@ -188,11 +186,11 @@ export class ManagerController {
         throw new AppError(
           403,
           "Authentication",
-          "You are not allowed to create new task",
+          "You are not allowed to update status of the task",
         );
       }
       if (!req.params.id) {
-        throw new AppError(404, "Task", "You have to specifie ID of a task");
+        throw new AppError(404, "Task", "You have to specifie ID of the task");
       }
       if (typeof req.params.id !== "string") {
         throw new AppError(404, "Task", "ID must be type of string");
@@ -207,6 +205,99 @@ export class ManagerController {
         data: {
           task: {
             _id: result._id,
+            title: result.title,
+            description: result.description,
+            assignedEmployees: result.assignedEmployees,
+            status: result.status,
+          },
+        },
+      });
+      return;
+    } catch (error) {
+      next(error);
+    }
+  };
+  getEmployeesTasks = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    try {
+      if (!req.params.id) {
+        throw new AppError(
+          404,
+          "Task",
+          "You have to specifie ID of the employee",
+        );
+      }
+      if (typeof req.params.id !== "string") {
+        throw new AppError(404, "Task", "Employee's ID must be type of string");
+      }
+      const employeeId = req.params.id as string;
+      this.logger.info("Attempting to get all tasks of the employee", {
+        employeeId,
+      });
+      const result: IAsssignedTask[] =
+        await this.managerService.getEmployeeTasks(employeeId);
+      res.status(200).json({
+        success: true,
+        data: {
+          tasks: result,
+        },
+      });
+      return;
+    } catch (error) {
+      next(error);
+    }
+  };
+  updateTask = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    try {
+      if (!(req as AuthenticatedRequest).employee.role) {
+        throw new AppError(400, "Authentication", "Role must be defined");
+      }
+      if (
+        (req as AuthenticatedRequest).employee.role !==
+        "67b6176b6cd87f74fd8b64d8"
+      ) {
+        throw new AppError(
+          403,
+          "Authentication",
+          "You are not allowed to update the task",
+        );
+      }
+      if (!req.params.id) {
+        throw new AppError(404, "Task", "You have to specifie ID of the task");
+      }
+      if (typeof req.params.id !== "string") {
+        throw new AppError(404, "Task", "ID must be type of string");
+      }
+      const { id } = req.params as { id: string };
+      const { title, description, assignedEmployees, status } = req.body as {
+        title: string;
+        description: string;
+        assignedEmployees: string[];
+        status: string;
+      };
+      this.logger.info("Attempting to update the task", {
+        id,
+      });
+
+      const result: IAsssignedTask = await this.managerService.updateTask(
+        id,
+        title,
+        description,
+        assignedEmployees,
+        status,
+      );
+      res.status(200).json({
+        success: true,
+        data: {
+          task: {
+            id: result._id,
             title: result.title,
             description: result.description,
             assignedEmployees: result.assignedEmployees,

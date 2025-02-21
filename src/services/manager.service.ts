@@ -90,7 +90,6 @@ export class ManagerService {
           },
         },
       },
-      { new: true },
     );
     if (!result) {
       this.logger.error(
@@ -103,7 +102,7 @@ export class ManagerService {
         "Problem occurred during assigning new employees to task",
       );
     }
-    result.status = "done";
+    result.assignedEmployees.push(...employees);
     await this.caching.set(`Task-${taskId}`, JSON.stringify(result));
     return result;
   };
@@ -118,14 +117,58 @@ export class ManagerService {
     );
     if (!result) {
       this.logger.error(
-        "Problem occurred during assigning new employees to task",
+        "Problem occurred during updating status of the  task",
         { taskId },
       );
       throw new AppError(
         404,
         "Task",
-        "Problem occurred during assigning new employees to task",
+        "Problem occurred during updating of the task",
       );
+    }
+    result.status = "done";
+    await this.caching.set(`Task-${taskId}`, JSON.stringify(result));
+    return result;
+  };
+  getEmployeeTasks = async (employeeId: string): Promise<IAsssignedTask[]> => {
+    const result: IAsssignedTask[] | null = await AsssignedTask.find({
+      assignedEmployees: employeeId,
+    });
+    if (!result) {
+      this.logger.error(
+        "Problem occurred during updating status of the  task",
+        { employeeId },
+      );
+      throw new AppError(
+        404,
+        "Task",
+        "Problem occurred during updating of the task",
+      );
+    }
+    return result;
+  };
+  updateTask = async (
+    taskId: string,
+    title: string,
+    description: string,
+    assignedEmployees: string[],
+    status: string,
+  ): Promise<IAsssignedTask> => {
+    const result: IAsssignedTask | null = await AsssignedTask.findByIdAndUpdate(
+      taskId,
+      {
+        title,
+        description,
+        assignedEmployees,
+        status,
+      },
+      {
+        new: true,
+      },
+    );
+    if (!result) {
+      this.logger.error("Problem occurred during updating task", { taskId });
+      throw new AppError(404, "Task", "Problem occurred during updating  task");
     }
     await this.caching.set(`Task-${taskId}`, JSON.stringify(result));
     return result;
