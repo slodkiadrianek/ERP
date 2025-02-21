@@ -10,7 +10,11 @@ import { RedisCacheService } from "../types/common.types.js";
 export class AuthService {
   private logger: Logger;
   private auth: Authentication;
-  constructor(logger: Logger, auth: Authentication, private caching: RedisCacheService) {
+  constructor(
+    logger: Logger,
+    auth: Authentication,
+    private caching: RedisCacheService,
+  ) {
     this.logger = logger;
     this.auth = auth;
   }
@@ -30,7 +34,11 @@ export class AuthService {
       const hashedPassword = await bcrypt.hash(employeeData.password, 12);
       employeeData.password = hashedPassword;
       const result = await Employee.create(employeeData);
-     await  this.caching.set(`Employee-${result.email}`, JSON.stringify(result));
+      await this.caching.set(
+        `Employee-${result.email}`,
+        JSON.stringify(result),
+        300,
+      );
       return result;
     } catch (error) {
       this.logger.error(`Error registering employee: ${error}`);

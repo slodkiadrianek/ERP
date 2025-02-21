@@ -30,8 +30,8 @@ const roleSchema = new Schema<IRole>({
 
 const employeeSchema = new Schema<IEmployee>(
   {
-    firstname: { type: String, required: true, unique: true },
-    lastname: { type: String, required: true, unique: true },
+    firstname: { type: String, required: true },
+    lastname: { type: String, required: true },
     password: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     role: { type: Schema.Types.ObjectId, ref: "Role", required: true },
@@ -41,18 +41,18 @@ const employeeSchema = new Schema<IEmployee>(
 );
 
 export interface IAsssignedTask {
-  _id:string
+  _id: string;
   title: string;
   description: string;
   assignedEmployees: string[];
-  status: "done" | "undone"
+  status: "done" | "undone";
 }
 
 const assignedTaskSchema = new Schema<IAsssignedTask>({
   title: { type: String, required: true },
   description: { type: String, required: true },
   assignedEmployees: { type: [Types.ObjectId], required: true },
-  status: { type: String, enum: ["done", "undone"], default: "undone" }
+  status: { type: String, enum: ["done", "undone"], default: "undone" },
 });
 
 const attendanceSchema = new Schema<IAttendance>(

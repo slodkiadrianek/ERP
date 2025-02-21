@@ -1,4 +1,5 @@
 import { AsssignedTask, IAsssignedTask } from "../models/employee.model.js";
+import mongoose from "mongoose";
 import { RedisCacheService } from "../types/common.types.js";
 import { Logger } from "../utils/logger.js";
 import { AppError } from "../models/error.model.js";
@@ -19,7 +20,11 @@ export class ManagerService {
         description,
         assignedEmployees: employeesID,
       });
-      await this.caching.set(`Task-${newtask._id}`, JSON.stringify(newtask));
+      await this.caching.set(
+        `Task-${newtask._id}`,
+        JSON.stringify(newtask),
+        300,
+      );
       return newtask;
     } catch (error) {
       this.logger.error("Failed to register new task", { error });
@@ -71,5 +76,58 @@ export class ManagerService {
       throw new AppError(404, "Task", "Task with this ID does not exist");
     }
     return task;
+  };
+  assignEmployeesToTask = async (
+    employees: string[],
+    taskId: string,
+  ): Promise<IAsssignedTask> => {
+    const result: IAsssignedTask | null = await AsssignedTask.findOneAndUpdate(
+      { _id: taskId },
+      {
+        $addToSet: {
+          assignedEmployees: {
+            $each: employees.map((el) => new mongoose.Types.ObjectId(el)),
+          },
+        },
+      },
+      { new: true },
+    );
+    if (!result) {
+      this.logger.error(
+        "Problem occurred during assigning new employees to task",
+        { taskId },
+      );
+      throw new AppError(
+        404,
+        "Task",
+        "Problem occurred during assigning new employees to task",
+      );
+    }
+    result.status = "done";
+    await this.caching.set(`Task-${taskId}`, JSON.stringify(result));
+    return result;
+  };
+  updateStatus = async (taskId: string): Promise<IAsssignedTask> => {
+    const result: IAsssignedTask | null = await AsssignedTask.findOneAndUpdate(
+      {
+        _id: taskId,
+      },
+      {
+        status: "done",
+      },
+    );
+    if (!result) {
+      this.logger.error(
+        "Problem occurred during assigning new employees to task",
+        { taskId },
+      );
+      throw new AppError(
+        404,
+        "Task",
+        "Problem occurred during assigning new employees to task",
+      );
+    }
+    await this.caching.set(`Task-${taskId}`, JSON.stringify(result));
+    return result;
   };
 }
