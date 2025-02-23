@@ -310,4 +310,44 @@ export class ManagerController {
       next(error);
     }
   };
+  deleteTask = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    try {
+      if (!(req as AuthenticatedRequest).employee.role) {
+        throw new AppError(400, "Authentication", "Role must be defined");
+      }
+      if (
+        (req as AuthenticatedRequest).employee.role !==
+        "67b6176b6cd87f74fd8b64d8"
+      ) {
+        throw new AppError(
+          403,
+          "Authentication",
+          "You are not allowed to update the task",
+        );
+      }
+      if (!req.params.id) {
+        throw new AppError(404, "Task", "You have to specifie ID of the task");
+      }
+      if (typeof req.params.id !== "string") {
+        throw new AppError(404, "Task", "ID must be type of string");
+      }
+      const { id } = req.params as { id: string };
+      this.logger.info("Attempting to delete the task", { taskId: id });
+      const result: string = await this.managerService.deleteTask(id);
+      this.logger.info("Task deleted successfully", { taskId: id });
+      res.status(200).json({
+        success: true,
+        data: {
+          message: result,
+        },
+      });
+      return;
+    } catch (error) {
+      next(error);
+    }
+  };
 }

@@ -1,5 +1,5 @@
 import { AsssignedTask, IAsssignedTask } from "../models/employee.model.js";
-import mongoose from "mongoose";
+import mongoose, { DeleteResult } from "mongoose";
 import { RedisCacheService } from "../types/common.types.js";
 import { Logger } from "../utils/logger.js";
 import { AppError } from "../models/error.model.js";
@@ -172,5 +172,16 @@ export class ManagerService {
     }
     await this.caching.set(`Task-${taskId}`, JSON.stringify(result));
     return result;
+  };
+  deleteTask = async (taskId: string): Promise<string> => {
+    const result: DeleteResult | null = await AsssignedTask.deleteOne({
+      _id: taskId,
+    });
+    if (!result) {
+      this.logger.error("Problem occurred during deleting task", { taskId });
+      throw new AppError(404, "Task", "Problem occurred during deleting task");
+    }
+    await this.caching.del(`Task-${taskId}`);
+    return "Task deleted successfully";
   };
 }

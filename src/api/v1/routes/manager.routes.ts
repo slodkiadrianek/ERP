@@ -54,5 +54,10 @@ export class ManagerRoutes {
       this.auth.verify,
       this.managerController.updateTask,
     );
+    this.router.delete(
+      "/api/v1/managers/tasks/:id",
+      this.auth.verify,
+      this.managerController.deleteTask,
+    );
   }
 }
