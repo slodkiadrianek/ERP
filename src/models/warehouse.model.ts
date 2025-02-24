@@ -7,10 +7,10 @@ export interface IWarehouse extends Document {
     country: string;
     city: string;
     street: string;
-    code: number;
-    number: string;
+    code: string;
+    number: number;
   };
-  capacity: number;
+  capacity: number; //  in m^3
   createdAt: Date;
   updatedAt: Date;
 }
@@ -32,11 +32,11 @@ const warehouseSchema = new Schema<IWarehouse>(
         required: true,
       },
       code: {
-        type: Number,
+        type: String,
         required: true,
       },
       number: {
-        type: String,
+        type: Number,
         required: true,
       },
     },

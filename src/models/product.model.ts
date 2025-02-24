@@ -1,5 +1,5 @@
 import { Document, Schema, model, Types } from "mongoose";
-import { IWarehouse } from "./inventory.model.js";
+import { IWarehouse } from "./warehouse.model.js";
 
 export interface ICategory extends Document {
   _id: Types.ObjectId;
@@ -16,6 +16,7 @@ export interface IProduct extends Document {
   cost: number;
   quantity: number;
   minStockLevel: number;
+  volume: number; // in m^3
   category: ICategory["_id"];
   warehouse: IWarehouse["_id"];
   createdAt: Date;

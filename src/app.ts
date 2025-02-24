@@ -13,6 +13,9 @@ import { ManagerService } from "./services/manager.service.js";
 import { ManagerController } from "./api/v1/controllers/manager.controller.js";
 import { ManagerRoutes } from "./api/v1/routes/manager.routes.js";
 import { errorHandler } from "./middleware/error.middleware.js";
+import { WarehouseService } from "./services/warehouse.service.js";
+import { WarehouseController } from "./api/v1/controllers/warehouse.controller.js";
+import { WarehouseRoutes } from "./api/v1/routes/warehouse.routes.js";
 export let caching: unknown;
 if (process.env.CACHE_LINK) {
   caching = await createClient({
@@ -39,9 +42,18 @@ const auth = new Authentication(
 const authService = new AuthService(logger, auth, caching as RedisCacheService);
 const authController = new AuthController(logger, authService);
 const employeeRoutes = new AuthRoutes(authController, auth);
+//manager
 const managerService = new ManagerService(logger, caching as RedisCacheService);
 const managerController = new ManagerController(logger, managerService);
 const managerRoutes = new ManagerRoutes(auth, managerController);
+// warehouse
+const warehouseService = new WarehouseService(
+  logger,
+  caching as RedisCacheService,
+);
+const warehouseController = new WarehouseController(logger, warehouseService);
+const warehouseRoutes = new WarehouseRoutes(auth, warehouseController);
 app.use(employeeRoutes.router);
 app.use(managerRoutes.router);
+app.use(warehouseRoutes.router);
 app.use(errorHandler);

@@ -27,6 +27,8 @@ export const reportPermissions: string[] = [
   "67b6177c6cd87f74fd8b64d9",
 ];
 
+export const warehousesPermissions: string[] = ["67b617946cd87f74fd8b64da"];
+
 export function permissionsCheck(permissionsSchema: string[]) {
   return (req: Request, _res: Response, next: NextFunction) => {
     if (!(req as AuthenticatedRequest).employee.role) {

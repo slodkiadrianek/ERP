@@ -1,17 +1,23 @@
 import { Authentication } from "../../../middleware/auth.middleware.js";
-import { Logger } from "../../../utils/logger.js";
-
+import { inventoryController } from "../controllers/inventory.controller.js";
+import { Router } from "express";
+import {
+  warehousesPermissions,
+  permissionsCheck,
+} from "../../../middleware/access.middleware.js";
 export class invetoryRoutes {
-  private logger: Logger;
-  private auth: Authentication;
-  private invenController: inventoryController;
   constructor(
-    logger: Logger,
-    auth: Authentication,
-    invenController: inventoryController,
+    private auth: Authentication,
+    private invenController: inventoryController,
+    public router: Router = Router(),
   ) {
-    this.logger = logger;
-    this.auth = auth;
-    this.invenController = invenController;
+    this.initializeRoutes();
+  }
+  protected initializeRoutes() {
+    this.router.post(
+      "/api/v1/warehouses",
+      this.auth.verify,
+      permissionsCheck(warehousesPermissions),
+    );
   }
 }
