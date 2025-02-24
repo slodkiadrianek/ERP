@@ -3,7 +3,6 @@ import { ManagerService } from "../../../services/manager.service.js";
 import { Request, Response, NextFunction } from "express";
 import { IAsssignedTask } from "../../../models/employee.model.js";
 import { AppError } from "../../../models/error.model.js";
-import { AuthenticatedRequest } from "../../../types/module.types.js";
 
 interface NewTask {
   title: string;
@@ -23,19 +22,6 @@ export class ManagerController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      if (!(req as AuthenticatedRequest).employee.role) {
-        throw new AppError(404, "Authentication", "Role must be defined");
-      }
-      if (
-        (req as AuthenticatedRequest).employee.role !==
-        "67b6176b6cd87f74fd8b64d8"
-      ) {
-        throw new AppError(
-          403,
-          "Authentication",
-          "You are not allowed to create new task",
-        );
-      }
       const { title, description, assignedEmployees } = req.body as NewTask;
       this.logger.info(`Attempting to create new task`, { title });
       const result: IAsssignedTask = await this.managerService.createNewTask(
@@ -123,19 +109,6 @@ export class ManagerController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      if (!(req as AuthenticatedRequest).employee.role) {
-        throw new AppError(400, "Authentication", "Role must be defined");
-      }
-      if (
-        (req as AuthenticatedRequest).employee.role !==
-        "67b6176b6cd87f74fd8b64d8"
-      ) {
-        throw new AppError(
-          403,
-          "Authentication",
-          "You are not allowed to assign new employees to task",
-        );
-      }
       if (!req.params.id) {
         throw new AppError(404, "Task", "You have to specifie ID of the task");
       }
@@ -176,19 +149,6 @@ export class ManagerController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      if (!(req as AuthenticatedRequest).employee.role) {
-        throw new AppError(400, "Authentication", "Role must be defined");
-      }
-      if (
-        (req as AuthenticatedRequest).employee.role !==
-        "67b6176b6cd87f74fd8b64d8"
-      ) {
-        throw new AppError(
-          403,
-          "Authentication",
-          "You are not allowed to update status of the task",
-        );
-      }
       if (!req.params.id) {
         throw new AppError(404, "Task", "You have to specifie ID of the task");
       }
@@ -256,19 +216,6 @@ export class ManagerController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      if (!(req as AuthenticatedRequest).employee.role) {
-        throw new AppError(400, "Authentication", "Role must be defined");
-      }
-      if (
-        (req as AuthenticatedRequest).employee.role !==
-        "67b6176b6cd87f74fd8b64d8"
-      ) {
-        throw new AppError(
-          403,
-          "Authentication",
-          "You are not allowed to update the task",
-        );
-      }
       if (!req.params.id) {
         throw new AppError(404, "Task", "You have to specifie ID of the task");
       }
@@ -316,19 +263,6 @@ export class ManagerController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      if (!(req as AuthenticatedRequest).employee.role) {
-        throw new AppError(400, "Authentication", "Role must be defined");
-      }
-      if (
-        (req as AuthenticatedRequest).employee.role !==
-        "67b6176b6cd87f74fd8b64d8"
-      ) {
-        throw new AppError(
-          403,
-          "Authentication",
-          "You are not allowed to update the task",
-        );
-      }
       if (!req.params.id) {
         throw new AppError(404, "Task", "You have to specifie ID of the task");
       }
