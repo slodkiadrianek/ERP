@@ -6,7 +6,10 @@ import {
   permissionsCheck,
 } from "../../../middleware/access.middleware.js";
 import { ValidationMiddleware } from "../../../middleware/validation.middleware.js";
-import { newWarehouseSchema } from "../../../schemas/warehouse.schema.js";
+import {
+  newWarehouseSchema,
+  warehouseId,
+} from "../../../schemas/warehouse.schema.js";
 export class WarehouseRoutes {
   constructor(
     private auth: Authentication,
@@ -31,7 +34,23 @@ export class WarehouseRoutes {
     this.router.get(
       "/api/v1/warehouses/:id",
       this.auth.verify,
+      ValidationMiddleware.validate(warehouseId, "params"),
       this.warehouseController.getWarehouseById,
+    );
+    this.router.put(
+      "/api/v1/warehouses/:id",
+      this.auth.verify,
+      permissionsCheck(warehousesPermissions),
+      ValidationMiddleware.validate(warehouseId, "params"),
+      ValidationMiddleware.validate(newWarehouseSchema, "body"),
+      this.warehouseController.updateWarehouse,
+    );
+    this.router.delete(
+      "/api/v1/warehouses/:id",
+      this.auth.verify,
+      permissionsCheck(warehousesPermissions),
+      ValidationMiddleware.validate(warehouseId, "params"),
+      this.warehouseController.deleteWarehouse,
     );
   }
 }

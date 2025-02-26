@@ -1,4 +1,4 @@
-import { Document, Schema, model, Types } from "mongoose";
+import { Document, Schema, model, Types, Model } from "mongoose";
 import { IWarehouse } from "./warehouse.model.js";
 
 export interface ICategory extends Document {
@@ -11,7 +11,6 @@ export interface IProduct extends Document {
   _id: Types.ObjectId;
   name: string;
   description: string;
-  sku: string;
   price: number;
   cost: number;
   quantity: number;
@@ -19,8 +18,6 @@ export interface IProduct extends Document {
   volume: number; // in m^3
   category: ICategory["_id"];
   warehouse: IWarehouse["_id"];
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 const categorySchema = new Schema<ICategory>({
@@ -28,11 +25,10 @@ const categorySchema = new Schema<ICategory>({
   description: { type: String },
 });
 
-const productSchema = new Schema(
+const productSchema = new Schema<IProduct>(
   {
     name: { type: String, required: true },
     description: { type: String },
-    sku: { type: String, required: true, unique: true },
     price: { type: Number, required: true },
     cost: { type: Number, required: true },
     quantity: { type: Number, default: 0 },
@@ -42,10 +38,21 @@ const productSchema = new Schema(
       ref: "Category",
       required: true,
     },
-    warehouse: { type: Schema.Types.ObjectId, ref: "Warehouse" },
+    volume: { type: Number, required: true },
+    warehouse: {
+      type: Schema.Types.ObjectId,
+      ref: "Warehouse",
+      required: true,
+    },
   },
   { timestamps: true },
 );
 
-export const Category = model("Category", categorySchema);
-export const Product = model("Product", productSchema);
+export const Category: Model<ICategory> = model<ICategory>(
+  "Category",
+  categorySchema,
+);
+export const Product: Model<IProduct> = model<IProduct>(
+  "Product",
+  productSchema,
+);

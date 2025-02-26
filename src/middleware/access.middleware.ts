@@ -28,6 +28,10 @@ export const reportPermissions: string[] = [
 ];
 
 export const warehousesPermissions: string[] = ["67b617946cd87f74fd8b64da"];
+export const productsPermissions: string[] = [
+  "67b616f56cd87f74fd8b64d5",
+  "67b617946cd87f74fd8b64da",
+];
 
 export function permissionsCheck(permissionsSchema: string[]) {
   return (req: Request, _res: Response, next: NextFunction) => {

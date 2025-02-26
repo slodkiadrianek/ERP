@@ -8,6 +8,7 @@ interface NewTask {
   title: string;
   description: string;
   assignedEmployees: string[];
+  status: "done" | "undone";
 }
 
 export class ManagerController {
@@ -22,14 +23,11 @@ export class ManagerController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const { title, description, assignedEmployees } = req.body as NewTask;
-      this.logger.info(`Attempting to create new task`, { title });
-      const result: IAsssignedTask = await this.managerService.createNewTask(
-        title,
-        description,
-        assignedEmployees,
-      );
-      this.logger.info(`Created new task`, { title });
+      const data = req.body as NewTask;
+      this.logger.info(`Attempting to create new task`, { title: data.title });
+      const result: IAsssignedTask =
+        await this.managerService.createNewTask(data);
+      this.logger.info(`Created new task`, { title: data.title });
       res.status(201).json({
         success: true,
         data: {
@@ -75,12 +73,6 @@ export class ManagerController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      if (!req.params.id) {
-        throw new AppError(400, "Task", "You have to specifie ID of the task");
-      }
-      if (typeof req.params.id !== "string") {
-        throw new AppError(404, "Task", "ID must be type of string");
-      }
       const { id } = req.params as { id: string };
       this.logger.info(`Attempting to get  task `, { id });
       const result: IAsssignedTask = await this.managerService.getTaskById(id);
@@ -109,12 +101,6 @@ export class ManagerController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      if (!req.params.id) {
-        throw new AppError(404, "Task", "You have to specifie ID of the task");
-      }
-      if (typeof req.params.id !== "string") {
-        throw new AppError(404, "Task", "ID must be type of string");
-      }
       const taskId = req.params.id as string;
       const employees = req.body.assignedEmployees as string[];
       this.logger.info(`Attempting to assign new employees to task`, {
@@ -223,11 +209,11 @@ export class ManagerController {
         throw new AppError(404, "Task", "ID must be type of string");
       }
       const { id } = req.params as { id: string };
-      const { title, description, assignedEmployees, status } = req.body as {
+      const data = req.body as {
         title: string;
         description: string;
         assignedEmployees: string[];
-        status: string;
+        status: "done" | "undone";
       };
       this.logger.info("Attempting to update the task", {
         id,
@@ -235,10 +221,7 @@ export class ManagerController {
 
       const result: IAsssignedTask = await this.managerService.updateTask(
         id,
-        title,
-        description,
-        assignedEmployees,
-        status,
+        data,
       );
       res.status(200).json({
         success: true,

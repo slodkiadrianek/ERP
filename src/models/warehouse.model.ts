@@ -1,5 +1,4 @@
-import { Document, Schema, model, Types } from "mongoose";
-
+import { Document, Schema, model, Model, Types } from "mongoose";
 export interface IWarehouse extends Document {
   _id: Types.ObjectId;
   name: string;
@@ -11,8 +10,6 @@ export interface IWarehouse extends Document {
     number: number;
   };
   capacity: number; //  in m^3
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 const warehouseSchema = new Schema<IWarehouse>(
@@ -45,4 +42,7 @@ const warehouseSchema = new Schema<IWarehouse>(
   { timestamps: true },
 );
 
-export const Warehouse = model("Warehouse", warehouseSchema);
+export const Warehouse: Model<IWarehouse> = model<IWarehouse>(
+  "Warehouse",
+  warehouseSchema,
+);

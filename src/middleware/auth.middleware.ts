@@ -37,7 +37,6 @@ export class Authentication {
     next: NextFunction,
   ): Promise<void> => {
     const token = req.headers?.authorization?.split(" ")[1];
-    console.log(token);
     if (!token) {
       this.logger.error(
         `Token is missing during verification of request ${req.baseUrl} with data: ${req.body}`,

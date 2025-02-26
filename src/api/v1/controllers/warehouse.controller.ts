@@ -2,7 +2,6 @@ import { Logger } from "../../../utils/logger.js";
 import { Request, Response, NextFunction } from "express";
 import { WarehouseService } from "../../../services/warehouse.service.js";
 import { IWarehouse } from "../../../models/warehouse.model.js";
-import { number } from "joi";
 export interface newWarehouse {
   name: string;
   location: {
@@ -24,7 +23,7 @@ export class WarehouseController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const data: newWarehouse = req.body as newWarehouse;
+      const data: Omit<IWarehouse, "_id"> = req.body;
       this.logger.info("Creating new warehouse", { data });
       const result: IWarehouse =
         await this.warehouseService.createNewWarehouse(data);
@@ -51,7 +50,7 @@ export class WarehouseController {
     }
   };
   getAllWarehouses = async (
-    req: Request,
+    _req: Request,
     res: Response,
     next: NextFunction,
   ): Promise<void> => {
@@ -87,10 +86,12 @@ export class WarehouseController {
     next: NextFunction,
   ): Promise<void> => {
     try {
+      const { id } = req.params as {
+        id: string;
+      };
       this.logger.info("Getting warehouse by id");
-      const result: IWarehouse = await this.warehouseService.getWarehouseById(
-        req.params.id,
-      );
+      const result: IWarehouse =
+        await this.warehouseService.getWarehouseById(id);
       this.logger.info("Warehouse retrieved by id", { result });
       res.status(200).json({
         success: true,
@@ -108,6 +109,63 @@ export class WarehouseController {
           },
         },
       });
+      return;
+    } catch (error) {
+      next(error);
+    }
+  };
+  updateWarehouse = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    try {
+      const { id } = req.params as { id: string };
+      const data: newWarehouse = req.body as newWarehouse;
+      this.logger.info("Updating warehouse", { data });
+      const result: IWarehouse = await this.warehouseService.updateWarehouse(
+        id,
+        data,
+      );
+      this.logger.info("Warehouse updated", { result });
+      res.status(200).json({
+        success: true,
+        data: {
+          warehouse: {
+            name: result.name,
+            location: {
+              country: result.location.country,
+              city: result.location.city,
+              srtreet: result.location.street,
+              code: result.location.code,
+              number: result.location.number,
+            },
+            capacity: result.capacity,
+          },
+        },
+      });
+      return;
+    } catch (error) {
+      next(error);
+    }
+  };
+  deleteWarehouse = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    try {
+      const { id } = req.params as { id: string };
+      this.logger.info("Deleting warehouse by id", { id });
+      const result: string = await this.warehouseService.deleteWarehouse(id);
+      this.logger.info("Warehouse deleted by id", { result });
+      res.status(200).json({
+        success: true,
+        data: {
+          warehouse: result,
+        },
+      });
+      return;
     } catch (error) {
       next(error);
     }

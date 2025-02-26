@@ -35,3 +35,9 @@ export const addEmployeestoTask: ObjectSchema = Joi.object({
     }),
 });
 
+export const taskId: ObjectSchema = Joi.object({
+  id: Joi.string().required().messages({
+    "any.required": "ID is required",
+    "string.base": "ID must be a string",
+  }),
+});

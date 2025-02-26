@@ -32,3 +32,10 @@ export const newWarehouseSchema: ObjectSchema = Joi.object({
     "any.required": "Capacity is required",
   }),
 });
+
+export const warehouseId: ObjectSchema = Joi.object({
+  id: Joi.string().required().messages({
+    "string.base": `City should be a type of string`,
+    "any.required": "City is required",
+  }),
+});

@@ -16,6 +16,9 @@ import { errorHandler } from "./middleware/error.middleware.js";
 import { WarehouseService } from "./services/warehouse.service.js";
 import { WarehouseController } from "./api/v1/controllers/warehouse.controller.js";
 import { WarehouseRoutes } from "./api/v1/routes/warehouse.routes.js";
+import { InventoryService } from "./services/inventory.service.js";
+import { InventoryController } from "./api/v1/controllers/inventory.controller.js";
+import { InventoryRoutes } from "./api/v1/routes/inventory.routes.js";
 export let caching: unknown;
 if (process.env.CACHE_LINK) {
   caching = await createClient({
@@ -53,7 +56,16 @@ const warehouseService = new WarehouseService(
 );
 const warehouseController = new WarehouseController(logger, warehouseService);
 const warehouseRoutes = new WarehouseRoutes(auth, warehouseController);
+// inventory
+const inventoryService = new InventoryService(
+  logger,
+  caching as RedisCacheService,
+);
+const inventoryController = new InventoryController(logger, inventoryService);
+const inventoryRoutes = new InventoryRoutes(auth, inventoryController);
+
 app.use(employeeRoutes.router);
 app.use(managerRoutes.router);
 app.use(warehouseRoutes.router);
+app.use(inventoryRoutes.router);
 app.use(errorHandler);
