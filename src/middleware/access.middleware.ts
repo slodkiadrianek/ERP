@@ -32,6 +32,10 @@ export const productsPermissions: string[] = [
   "67b616f56cd87f74fd8b64d5",
   "67b617946cd87f74fd8b64da",
 ];
+export const purchasePermissions: string[] = [
+  "67b6177c6cd87f74fd8b64d9",
+  "67bc1548f94794bc4ad23534",
+];
 
 export function permissionsCheck(permissionsSchema: string[]) {
   return (req: Request, _res: Response, next: NextFunction) => {

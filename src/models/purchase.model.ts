@@ -1,6 +1,6 @@
-import { Document, Schema, model, Types } from "mongoose";
+import { Document, Schema, model, Types, Model } from "mongoose";
 import { IProduct } from "./product.model.js";
-import { IWarehouse } from "./inventory.model.js";
+import { IWarehouse } from "./warehouse.model.js";
 export interface ISupplier extends Document {
   _id: Types.ObjectId;
   name: string;
@@ -11,11 +11,9 @@ export interface ISupplier extends Document {
     city: string;
     street: string;
     code: number;
-    number: string;
+    number: number;
   };
   paymentTerms: string;
-  createdAt: Date;
-  updatedAT: Date;
 }
 
 export interface IPurchaseOrder extends Document {
@@ -30,8 +28,6 @@ export interface IPurchaseOrder extends Document {
   status: "pending" | "completed" | "cancelled";
   paymentStatus: "paid" | "unpaid" | "partial";
   warehouse: IWarehouse["_id"];
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 const supplierSchema = new Schema<ISupplier>(
@@ -44,11 +40,11 @@ const supplierSchema = new Schema<ISupplier>(
       city: { type: String, required: true },
       street: { type: String, required: true },
       code: { type: Number, required: true },
-      number: { type: String, required: true },
+      number: { type: Number, required: true },
     },
     paymentTerms: { type: String },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const purchaseOrderSchema = new Schema<IPurchaseOrder>(
@@ -79,8 +75,14 @@ const purchaseOrderSchema = new Schema<IPurchaseOrder>(
     },
     warehouse: { type: Schema.Types.ObjectId, ref: "Warehouse" },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-export const Supplier = model("Supplier", supplierSchema);
-export const PurchaseOrder = model("PurchaseOrder", purchaseOrderSchema);
+export const Supplier: Model<ISupplier> = model<ISupplier>(
+  "Supplier",
+  supplierSchema,
+);
+export const PurchaseOrder: Model<IPurchaseOrder> = model<IPurchaseOrder>(
+  "PurchaseOrder",
+  purchaseOrderSchema,
+);
