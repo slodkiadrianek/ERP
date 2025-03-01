@@ -25,21 +25,29 @@ export const addPurchaseOrder = Joi.object({
   items: Joi.array().items(
     Joi.object({
       product: Joi.string().required(),
+      price: Joi.number().required(),
+      quantity: Joi.number().required(),
     }),
   ),
+  totalPrice: Joi.number().required(),
   totalAmount: Joi.number().required(),
   expectedDeliveryDate: Joi.date().required(),
   status: Joi.string()
     .valid("pending", "completed", "cancelled")
-    .default("pending")
-    .required(),
+    .default("pending"),
   paymentStatus: Joi.string()
     .valid("paid", "unpaid", "partial")
-    .default("unpaid")
-    .required(),
+    .default("unpaid"),
   warehouse: Joi.string().required(),
 });
 
 export const purchaseOrderId = Joi.object({
   id: Joi.string().required(),
 });
+export const purchaseOrderStatus = Joi.object({
+  status: Joi.string().valid("completed", "cancelled").required(),
+}).concat(purchaseOrderId);
+
+export const purchaseOrderPaymentStatus = Joi.object({
+  paymentStatus: Joi.string().valid("paid", "unpaid", "partial").required(),
+}).concat(purchaseOrderId);

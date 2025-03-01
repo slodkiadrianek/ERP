@@ -23,6 +23,7 @@ export interface IPurchaseOrder extends Document {
     quantity: number;
     price: number;
   }[];
+  totalPrice: number;
   totalAmount: number;
   expectedDeliveryDate: Date;
   status: "pending" | "completed" | "cancelled";
@@ -61,6 +62,7 @@ const purchaseOrderSchema = new Schema<IPurchaseOrder>(
         price: { type: Number, required: true },
       },
     ],
+    totalPrice: { type: Number, required: true },
     totalAmount: { type: Number, required: true },
     status: {
       type: String,

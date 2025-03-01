@@ -1,7 +1,9 @@
 import express from "express";
 import { AuthRoutes } from "./api/v1/routes/auth.routes.js";
 import { Logger } from "./utils/logger.js";
-
+import { PurchaseService } from "./services/purchases.service.js";
+import { PurchaseController } from "./api/v1/controllers/purchases.controller.js";
+import { PurchaseRoutes } from "./api/v1/routes/purchases.routes.js";
 import cors from "cors";
 import helmet from "helmet";
 import { createClient } from "redis";
@@ -63,9 +65,17 @@ const inventoryService = new InventoryService(
 );
 const inventoryController = new InventoryController(logger, inventoryService);
 const inventoryRoutes = new InventoryRoutes(auth, inventoryController);
+// purchases
+const purchasesService = new PurchaseService(
+  logger,
+  caching as RedisCacheService,
+);
+const purchasesController = new PurchaseController(logger, purchasesService);
+const purchasesRoutes = new PurchaseRoutes(auth, purchasesController);
 
 app.use(employeeRoutes.router);
 app.use(managerRoutes.router);
 app.use(warehouseRoutes.router);
 app.use(inventoryRoutes.router);
+app.use(purchasesRoutes.router);
 app.use(errorHandler);
