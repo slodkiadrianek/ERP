@@ -21,6 +21,7 @@ import { WarehouseRoutes } from "./api/v1/routes/warehouse.routes.js";
 import { InventoryService } from "./services/inventory.service.js";
 import { InventoryController } from "./api/v1/controllers/inventory.controller.js";
 import { InventoryRoutes } from "./api/v1/routes/inventory.routes.js";
+import { EmailService } from "./services/email.service.js";
 export let caching: unknown;
 if (process.env.CACHE_LINK) {
   caching = await createClient({
@@ -38,7 +39,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const logger = new Logger();
-
+// if(!process.env.EMAIL_SERVICE || !process.env.EMAIL_USER || !process.env.EMAIL_PASS || !process.env.EMAIL_FROM){
+// console.error(`You have to specifie email data to use email service`);
+// process.exit(1)
+// }
+// const emailService  = new EmailService(process.env.EMAIL_SERVICE, process.env.EMAIL_USER, process.env.EMAIL_PASS, process.env.EMAIL_FROM)
 const auth = new Authentication(
   process.env.JWT_SECRET || "",
   logger,

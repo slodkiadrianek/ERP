@@ -1,4 +1,4 @@
-import { Logger } from "winston";
+import { Logger } from "../../../utils/logger.js";
 import { ManagerService } from "../../../services/manager.service.js";
 import { Request, Response, NextFunction } from "express";
 import { IAsssignedTask } from "../../../models/employee.model.js";
@@ -16,7 +16,6 @@ export class ManagerController {
     private logger: Logger,
     private managerService: ManagerService,
   ) {}
-  // Route for creating tasks
   createNewtask = async (
     req: Request,
     res: Response,
