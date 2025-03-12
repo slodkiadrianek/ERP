@@ -12,20 +12,18 @@ interface NewTask {
 }
 
 export class ManagerController {
-  constructor(
-    private logger: Logger,
-    private managerService: ManagerService,
-  ) {}
+  constructor(private logger: Logger, private managerService: ManagerService) {}
   createNewtask = async (
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     try {
       const data = req.body as NewTask;
       this.logger.info(`Attempting to create new task`, { title: data.title });
-      const result: IAsssignedTask =
-        await this.managerService.createNewTask(data);
+      const result: IAsssignedTask = await this.managerService.createNewTask(
+        data
+      );
       this.logger.info(`Created new task`, { title: data.title });
       res.status(201).json({
         success: true,
@@ -48,7 +46,7 @@ export class ManagerController {
   getAllTasks = async (
     _req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     try {
       this.logger.info(`Attempting to get all tasks`);
@@ -69,7 +67,7 @@ export class ManagerController {
   getTask = async (
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     try {
       const { id } = req.params as { id: string };
@@ -97,7 +95,7 @@ export class ManagerController {
   assignEmployeesToTask = async (
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     try {
       const taskId = req.params.id as string;
@@ -108,7 +106,7 @@ export class ManagerController {
       });
       const result = await this.managerService.assignEmployeesToTask(
         employees,
-        taskId,
+        taskId
       );
       this.logger.info(`Employees added to task`, { result });
       res.status(200).json({
@@ -131,7 +129,7 @@ export class ManagerController {
   updateStatus = async (
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     try {
       if (!req.params.id) {
@@ -142,8 +140,9 @@ export class ManagerController {
       }
       const taskId = req.params.id as string;
       this.logger.info(`Attempting to update status of  task `, { taskId });
-      const result: IAsssignedTask =
-        await this.managerService.updateStatus(taskId);
+      const result: IAsssignedTask = await this.managerService.updateStatus(
+        taskId
+      );
       this.logger.info(`Status updated successfully`, { taskId });
       res.status(200).json({
         success: true,
@@ -165,14 +164,14 @@ export class ManagerController {
   getEmployeesTasks = async (
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     try {
       if (!req.params.id) {
         throw new AppError(
           404,
           "Task",
-          "You have to specifie ID of the employee",
+          "You have to specifie ID of the employee"
         );
       }
       if (typeof req.params.id !== "string") {
@@ -198,7 +197,7 @@ export class ManagerController {
   updateTask = async (
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     try {
       if (!req.params.id) {
@@ -220,7 +219,7 @@ export class ManagerController {
 
       const result: IAsssignedTask = await this.managerService.updateTask(
         id,
-        data,
+        data
       );
       res.status(200).json({
         success: true,
@@ -242,7 +241,7 @@ export class ManagerController {
   deleteTask = async (
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     try {
       if (!req.params.id) {

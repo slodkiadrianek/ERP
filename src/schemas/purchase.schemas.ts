@@ -8,7 +8,7 @@ export const addSupplier = Joi.object({
     country: Joi.string().required(),
     city: Joi.string().required(),
     street: Joi.string().required(),
-    code: Joi.number().required(),
+    code: Joi.string().required(),
     number: Joi.string().required(),
   }),
   paymentTerms: Joi.string()
@@ -27,7 +27,7 @@ export const addPurchaseOrder = Joi.object({
       product: Joi.string().required(),
       price: Joi.number().required(),
       quantity: Joi.number().required(),
-    }),
+    })
   ),
   totalPrice: Joi.number().required(),
   totalAmount: Joi.number().required(),

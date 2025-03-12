@@ -10,7 +10,7 @@ export interface ISupplier extends Document {
     country: string;
     city: string;
     street: string;
-    code: number;
+    code: string;
     number: number;
   };
   paymentTerms: string;
@@ -40,12 +40,12 @@ const supplierSchema = new Schema<ISupplier>(
       country: { type: String, required: true },
       city: { type: String, required: true },
       street: { type: String, required: true },
-      code: { type: Number, required: true },
+      code: { type: String, required: true },
       number: { type: Number, required: true },
     },
     paymentTerms: { type: String },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 const purchaseOrderSchema = new Schema<IPurchaseOrder>(
@@ -77,14 +77,14 @@ const purchaseOrderSchema = new Schema<IPurchaseOrder>(
     },
     warehouse: { type: Schema.Types.ObjectId, ref: "Warehouse" },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 export const Supplier: Model<ISupplier> = model<ISupplier>(
   "Supplier",
-  supplierSchema,
+  supplierSchema
 );
 export const PurchaseOrder: Model<IPurchaseOrder> = model<IPurchaseOrder>(
   "PurchaseOrder",
-  purchaseOrderSchema,
+  purchaseOrderSchema
 );

@@ -22,6 +22,9 @@ import { InventoryService } from "./services/inventory.service.js";
 import { InventoryController } from "./api/v1/controllers/inventory.controller.js";
 import { InventoryRoutes } from "./api/v1/routes/inventory.routes.js";
 import { EmailService } from "./services/email.service.js";
+import { SupplierService } from "./services/supplier.service.js";
+import { SupplierController } from "./api/v1/controllers/supplier.controller.js";
+import { SupplierRoutes } from "./api/v1/routes/supplier.routes.js";
 export let caching: unknown;
 if (process.env.CACHE_LINK) {
   caching = await createClient({
@@ -47,7 +50,7 @@ const logger = new Logger();
 const auth = new Authentication(
   process.env.JWT_SECRET || "",
   logger,
-  caching as RedisCacheService,
+  caching as RedisCacheService
 );
 const authService = new AuthService(logger, auth, caching as RedisCacheService);
 const authController = new AuthController(logger, authService);
@@ -59,28 +62,36 @@ const managerRoutes = new ManagerRoutes(auth, managerController);
 // warehouse
 const warehouseService = new WarehouseService(
   logger,
-  caching as RedisCacheService,
+  caching as RedisCacheService
 );
 const warehouseController = new WarehouseController(logger, warehouseService);
 const warehouseRoutes = new WarehouseRoutes(auth, warehouseController);
 // inventory
 const inventoryService = new InventoryService(
   logger,
-  caching as RedisCacheService,
+  caching as RedisCacheService
 );
 const inventoryController = new InventoryController(logger, inventoryService);
 const inventoryRoutes = new InventoryRoutes(auth, inventoryController);
 // purchases
 const purchasesService = new PurchaseService(
   logger,
-  caching as RedisCacheService,
+  caching as RedisCacheService
 );
 const purchasesController = new PurchaseController(logger, purchasesService);
 const purchasesRoutes = new PurchaseRoutes(auth, purchasesController);
+//suppliers
+const supplierService = new SupplierService(
+  logger,
+  caching as RedisCacheService
+);
+const supplierController = new SupplierController(logger, supplierService);
+const supplierRoutes = new SupplierRoutes(auth, supplierController);
 
 app.use(employeeRoutes.router);
 app.use(managerRoutes.router);
 app.use(warehouseRoutes.router);
 app.use(inventoryRoutes.router);
 app.use(purchasesRoutes.router);
+app.use(supplierRoutes.router);
 app.use(errorHandler);
